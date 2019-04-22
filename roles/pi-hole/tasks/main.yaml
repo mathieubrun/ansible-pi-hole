@@ -1,0 +1,29 @@
+- name: Check if pi-hole binary exists
+  stat:
+    path: /usr/local/bin/pihole
+  register: pihole_binary
+
+- set_fact:
+    pihole_installed: "{{ pihole_binary.stat.exists | default(false) }}"
+
+- name: Create /etc/pihole directory
+  file:
+    path: /etc/pihole
+    state: directory
+
+- name: Copy setupVars.conf
+  template:
+    src: setupVars.conf.j2
+    dest: /etc/pihole/setupVars.conf
+  when: not pihole_installed
+
+- name: Download install script
+  get_url:
+    url: https://install.pi-hole.net
+    dest: ~/pihole-install.sh
+    mode: u+rwx
+  when: not pihole_installed
+
+- name: Run install script
+  shell: ~/pihole-install.sh --unattended
+  when: not pihole_installed

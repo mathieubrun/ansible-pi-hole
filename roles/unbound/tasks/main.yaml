@@ -1,0 +1,30 @@
+- name: Install unbound
+  package:
+    name: unbound
+
+- name: Create /var/lib/unbound/ directory
+  file:
+    path: /var/lib/unbound/
+    state: directory
+
+- name: Get root dns hints
+  get_url:
+    url: https://www.internic.net/domain/named.root
+    dest: /var/lib/unbound/root.hints
+
+- name: Create /var/log/unbound/ directory
+  file:
+    path: /var/log/unbound/
+    state: directory
+    owner: unbound
+    group: unbound
+
+- name: Copy unbound configuration service
+  copy:
+    src: files/pi-hole.conf
+    dest: /etc/unbound/unbound.conf.d/pi-hole.conf
+  notify:
+     - Restart unbound service
+
+- name: Set unbound as dns service for pi hole
+  command: pihole -a setdns 127.0.0.1#5354

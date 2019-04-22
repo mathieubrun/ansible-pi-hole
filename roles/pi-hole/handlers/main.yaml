@@ -1,0 +1,4 @@
+- name: Restart pihole-FTL.service
+  service:
+    name: pihole-FTL.service
+    state: restarted

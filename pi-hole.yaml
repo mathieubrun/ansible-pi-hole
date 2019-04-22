@@ -1,0 +1,18 @@
+- hosts: all
+  gather_facts: no
+  become: true
+
+  vars_prompt:
+  - name: ip_address
+    prompt: please enter the ip adress
+    default: 192.168.1.2/24
+    private: no
+
+  - name: net_interface
+    prompt: please enter the ip adress
+    default: wlan0
+    private: no
+
+  roles:
+    - pi-hole
+    - unbound
